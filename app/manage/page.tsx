@@ -1,111 +1,86 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { IonIcon, IonList } from "@ionic/react";
-import { arrowBack, addCircle, personAdd } from "ionicons/icons";
 import { Button } from "@/components/ui";
 import { useSession } from "@/lib/use-session";
+import { getSupabase } from "@/lib/supabase";
+
+type ManagedUser = { id: string; email: string | null; name: string | null; role: string };
 
 export default function ManagePage() {
   const router = useRouter();
-  const { session, signOut } = useSession();
+  const { session, isLoading, signOut } = useSession();
+  const [users, setUsers] = useState<ManagedUser[]>([]);
+  const [error, setError] = useState("");
+  const [loadingUsers, setLoadingUsers] = useState(true);
 
-  // Check if user is admin
-  if (!session?.role || session.role !== "admin") {
-    router.push("/admin");
-    return null;
+  const loadUsers = useCallback(async () => {
+    setLoadingUsers(true);
+    setError("");
+    try {
+      const { data, error: queryError } = await getSupabase()
+        .from("users")
+        .select("id, email, name, role")
+        .order("email", { ascending: true });
+      if (queryError) throw queryError;
+      setUsers((data ?? []) as ManagedUser[]);
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Could not load users.");
+    } finally {
+      setLoadingUsers(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isLoading) return;
+    if (!session || session.role !== "admin") {
+      router.replace("/admin");
+      return;
+    }
+    void loadUsers();
+  }, [isLoading, session?.role, session?.userId, router, loadUsers]);
+
+  const logout = async () => {
+    try {
+      await signOut();
+      router.replace("/admin");
+      router.refresh();
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Unable to sign out.");
+    }
+  };
+
+  if (isLoading || !session || session.role !== "admin") {
+    return <main className="screen" aria-busy="true">Checking administrator access…</main>;
   }
 
-  // Load users from localStorage on mount
-  const [users, setUsers] = useState<string[]>(() => {
-    if (typeof window === "undefined") return [];
-    try {
-      const stored = localStorage.getItem("2go.users");
-      return stored ? JSON.parse(stored) : [];
-    } catch {
-      return [];
-    }
-  });
-
-  // Save users to localStorage on change
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    try {
-      localStorage.setItem("2go.users", JSON.stringify(users));
-    } catch {
-      /* ignore */
-    }
-  }, [users]);
-
-  const [newUserEmail, setNewUserEmail] = useState("");
-
-  const addUser = () => {
-    if (!newUserEmail.trim()) return;
-    setUsers([...users, newUserEmail.trim()]);
-    setNewUserEmail("");
-  };
-
-  const removeUser = (email: string) => {
-    setUsers(users.filter((u) => u !== email));
-  };
-
-  const clearAllUsers = () => {
-    if (window.confirm("Are you sure you want to clear all users?")) {
-      setUsers([]);
-    }
-  };
-
   return (
-    <div className="screen">
+    <main className="screen">
       <div className="header-bar">
-        <IonIcon icon={arrowBack} className="back-btn" onClick={() => router.push("/admin")} />
         <h1 className="page-title">Admin Panel</h1>
       </div>
-
       <div className="admin-content mt-16">
-        <h2>Manage Users</h2>
-
-        <div className="input-row">
-          <input
-            type="email"
-            placeholder="Add new user email"
-            value={newUserEmail}
-            onChange={(e) => setNewUserEmail(e.target.value)}
-            readOnly
-          />
-          <Button variant="outline" onClick={addUser}>Add User</Button>
+        <h2>Registered Users</h2>
+        <p className="small muted mt-8">Signed in as {session.email}. Accounts and roles are stored in Supabase.</p>
+        <div className="mt-12">
+          <Button variant="outline" onClick={() => { void loadUsers(); }} disabled={loadingUsers}>Refresh Users</Button>
         </div>
-
-        <div className="users-list mt-12">
-          {users.length > 0 ? (
-            <IonList>
-              {users.map((email, index) => (
-                <div key={email} className="user-item">
-                  <span>{email}</span>
-                  <Button variant="ink" onClick={() => removeUser(email)}>
-                    Remove
-                  </Button>
-                </div>
-              ))}
-            </IonList>
-          ) : (
-            <p className="empty-state">No users yet. Add your first user above.</p>
-          )}
-        </div>
-
-        <div className="mt-8">
-          <Button variant="outline" onClick={clearAllUsers}>
-            <IonIcon icon="trash" className="icon-small" /> Clear All
-          </Button>
-        </div>
+        {error && <p role="alert" className="field__error mt-12">{error}</p>}
+        {loadingUsers ? <p className="mt-12">Loading users…</p> : (
+          <div className="users-list mt-12">
+            {users.length ? users.map((user) => (
+              <div key={user.id} className="user-item">
+                <span><strong>{user.name || user.email || "Unnamed user"}</strong><br />{user.email || "No email"} · {user.role}</span>
+              </div>
+            )) : <p className="empty-state">No users found. Check the Supabase users table and admin read policy.</p>}
+          </div>
+        )}
+        <p className="tiny mt-12">For security, creating and deleting authentication accounts must be done through a trusted server or the Supabase dashboard, not directly from the browser.</p>
       </div>
-
       <div className="mt-24">
-        <Button variant="outline" onClick={signOut}>
-          <IonIcon icon="log-out" /> Sign Out
-        </Button>
+        <Button variant="outline" onClick={() => { void logout(); }}>Sign Out</Button>
       </div>
-    </div>
+    </main>
   );
 }

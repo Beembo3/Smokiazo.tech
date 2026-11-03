@@ -3,7 +3,6 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { IonCheckbox } from "@ionic/react";
 import { ArrowUpRight, Button } from "@/components/ui";
 import { TextField } from "@/components/form";
 import { AuthFooterLink, AuthShell } from "@/components/auth";
@@ -12,106 +11,67 @@ import { useSession } from "@/lib/use-session";
 
 export default function AdminLoginPage() {
   const router = useRouter();
-  const { signIn } = useSession();
-  const [email, setEmail] = useState("admin@2go.com");
-  const [password, setPassword] = useState("admin123");
-  const [remember, setRemember] = useState(true);
+  const { signIn, signOut } = useSession();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const submit = () => {
+  const submit = async () => {
+    if (loading) return;
     const found: { email?: string; password?: string } = {};
     if (!emailPattern.test(email.trim())) found.email = "Enter a valid email address.";
-    if (password.length < 8) found.password = "Enter your password (8+ characters).";
+    if (!password) found.password = "Enter your password.";
     setErrors(found);
-    if (Object.keys(found).length > 0) return;
+    setError("");
+    if (Object.keys(found).length) return;
 
     setLoading(true);
-    signIn(email.trim(), "admin");
-    window.setTimeout(() => router.push("/manage"), 350);
+    try {
+      const account = await signIn(email.trim(), password);
+      if (account.role !== "admin") {
+        await signOut();
+        setError("This account does not have administrator access.");
+        return;
+      }
+      router.replace("/manage");
+      router.refresh();
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Unable to sign in.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <AuthShell
-      headline={
-        <>
-          Admin sign in
-          <br />
-          to your account.
-        </>
-      }
-      sub="Continue with your email and password to access the admin panel."
+      headline={<>Admin sign in<br />to your account.</>}
+      sub="Only approved administrators can access the management panel."
       footer={<AuthFooterLink text="or" href="/login" label="Go to User Login" />}
     >
       <div className="auth__card">
         <h2 className="auth__title">Sign in as Admin</h2>
-        <p className="auth__sub">Use your admin email and password to continue.</p>
-
-        <div className="stack mt-16" style={{ gap: 9 }}>
-          <TextField
-            label="Email address"
-            value={email}
-            onChange={(value) => {
-              setEmail(value);
-              setErrors((current) => ({ ...current, email: undefined }));
-            }}
-            type="email"
-            inputMode="email"
-            error={errors.email}
-            autoComplete="email"
-          />
-
-          <TextField
-            label="Password"
-            value={password}
-            onChange={(value) => {
-              setPassword(value);
-              setErrors((current) => ({ ...current, password: undefined }));
-            }}
-            type="password"
-            error={errors.password}
-            autoComplete="current-password"
-          />
-
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              gap: 10,
-              marginTop: 2,
-            }}
-          >
-            <div className="check-row" style={{ alignItems: "center" }}>
-              <IonCheckbox mode="md"
-                checked={remember}
-                aria-label="Remember me"
-                onIonChange={(event) => setRemember(event.detail.checked)}
-              />
-              <span style={{ fontWeight: 600, fontSize: 11.5 }}>Remember me</span>
-            </div>
-            <Link href="/login" className="link" style={{ fontSize: 11.5 }}>
-              Forgot password?
-            </Link>
+        <p className="auth__sub">Use your registered administrator credentials.</p>
+        <form onSubmit={(event) => { event.preventDefault(); void submit(); }} className="stack mt-16" style={{ gap: 9 }}>
+          <TextField label="Email address" value={email} onChange={(value) => {
+            setEmail(value); setErrors((previous) => ({ ...previous, email: undefined }));
+          }} type="email" inputMode="email" error={errors.email} autoComplete="email" />
+          <TextField label="Password" value={password} onChange={(value) => {
+            setPassword(value); setErrors((previous) => ({ ...previous, password: undefined }));
+          }} type="password" error={errors.password} autoComplete="current-password" />
+          <div style={{ display: "flex", justifyContent: "flex-end" }}>
+            <Link href="/forgot-password" className="link" style={{ fontSize: 11.5 }}>Forgot password?</Link>
           </div>
-
+          {error && <p role="alert" className="field__error">{error}</p>}
           <div className="full-button mt-12">
-            <Button variant="brand" onClick={submit} loading={loading}>
-              Sign In
-              <ArrowUpRight size={13} />
+            <Button variant="brand" onClick={() => { void submit(); }} loading={loading}>
+              Sign In <ArrowUpRight size={13} />
             </Button>
           </div>
-        </div>
-
-        <p className="tiny" style={{ marginTop: 12 }}>
-          Admin demo sign-in only.
-        </p>
+        </form>
       </div>
-
-      <p className="auth__legal">
-        Demo sign-in only. Guest tracking and quote requests work without an
-        account.
-      </p>
+      <p className="auth__legal">Administrator access is verified using the database role, not the email address.</p>
     </AuthShell>
   );
 }

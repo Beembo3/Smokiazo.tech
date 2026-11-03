@@ -1,8 +1,8 @@
 "use client";
 
-import { useCallback, useEffect } from "react";
-import { supabase } from "./supabase";
-import { usePersistentState } from "./use-persistent-state";
+import { useCallback, useEffect, useState } from "react";
+import type { User } from "@supabase/supabase-js";
+import { getSupabase } from "./supabase";
 
 export type Session = {
   userId: string | null;
@@ -12,156 +12,118 @@ export type Session = {
   verified: boolean;
 };
 
-export function useSession() {
-  const [session, setSession] = usePersistentState<Session | null>(
-    "2go.session",
-    null,
-  );
+async function profileFor(user: User): Promise<Session> {
+  // Role comes only from the database, never user_metadata or localStorage.
+  const { data, error } = await getSupabase()
+    .from("users")
+    .select("name, role")
+    .eq("id", user.id)
+    .maybeSingle();
 
-  // Initialize session from Supabase on client mount
-  const initializeSession = useCallback(async () => {
-    try {
-      const { data, error } = await supabase.auth.getSession();
-      if (error) throw error;
-
-      const { session: supabaseSession } = data;
-
-      if (supabaseSession) {
-        const { data: userData, error: userError } = await supabase
-          .from("users")
-          .select("*")
-          .eq("id", supabaseSession.user.id)
-          .single();
-
-        if (userError) throw userError;
-
-        const next: Session = {
-          userId: supabaseSession.user.id,
-          email: supabaseSession.user.email || null,
-          name: userData?.name || supabaseSession.user.user_metadata?.name || "User",
-          role: userData?.role || "user",
-          verified: userData?.verified || false,
-        };
-        setSession(next);
-      } else {
-        setSession(null);
-      }
-    } catch (error) {
-      console.error("Session init error:", error);
-      setSession(null);
-    }
-  }, [setSession]);
-
-  // Sync session changes from Supabase
-  useEffect(() => {
-    const handleAuthChange = async (event: string, session: any) => {
-      if (session) {
-        const { data: userData, error: userError } = await supabase
-          .from("users")
-          .select("*")
-          .eq("id", session.user.id)
-          .single();
-
-        if (userError) throw userError;
-
-        const next: Session = {
-          userId: session.user.id,
-          email: session.user.email,
-          name: userData?.name || session.user.user_metadata?.name || "User",
-          role: userData?.role || "user",
-          verified: userData?.verified || false,
-        };
-        setSession(next);
-      } else {
-        setSession(null);
-      }
-    };
-
-    const { data: authChange } = supabase.auth.onAuthStateChange(
-      handleAuthChange,
-    );
-
-    return () => {
-      authChange.subscription.unsubscribe();
-    };
-  }, [setSession]);
-
-  // Initialize on mount
-  useEffect(() => {
-    initializeSession();
-  }, [initializeSession]);
-
-  const signIn = useCallback(
-    async (email: string, password: string) => {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (error) throw error;
-
-      // Refresh session to get/update user profile
-      await initializeSession();
-    },
-    [initializeSession],
-  );
-
-  const signUp = useCallback(
-    async (name: string, email: string, password: string, role: "user" | "admin" = "user") => {
-      const { error: signUpError } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            name,
-            role,
-            verified: false,
-          },
-        },
-      });
-
-      if (signUpError) throw signUpError;
-
-      // Wait for auth to propagate, then initialize
-      await initializeSession();
-    },
-    [initializeSession],
-  );
-
-  const signOut = useCallback(async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) throw error;
-    setSession(null);
-  }, [setSession]);
-
-  const markVerified = useCallback(async () => {
-    setSession((current) => (current ? { ...current, verified: true } : null));
-  }, [setSession]);
-
-  const updateProfile = useCallback(
-    async (name: string, email: string) => {
-      setSession((current) => (current ? { ...current, name, email } : current));
-
-      if (!session?.userId) return;
-
-      const { error } = await supabase
-        .from("users")
-        .update({ name, email })
-        .eq("id", session.userId!);
-
-      if (error) throw error;
-    },
-    [session?.userId],
-  );
+  if (error) console.error("Unable to read user profile:", error.message);
 
   return {
-    session,
-    isSignedIn: Boolean(session?.userId),
-    signIn,
-    signUp,
-    signOut,
-    markVerified,
-    updateProfile,
-    initializeSession,
+    userId: user.id,
+    email: user.email ?? null,
+    name: data?.name ?? user.user_metadata?.name ?? "User",
+    role: data?.role === "admin" && !error ? "admin" : "user",
+    verified: Boolean(user.email_confirmed_at),
   };
+}
+
+export function useSession() {
+  const [session, setSession] = useState<Session | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const initializeSession = useCallback(async () => {
+    try {
+      const { data, error } = await getSupabase().auth.getUser();
+      if (error && error.name !== "AuthSessionMissingError") throw error;
+      setSession(data.user ? await profileFor(data.user) : null);
+    } catch (error) {
+      console.error("Session initialization error:", error);
+      setSession(null);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    // Do not await Supabase operations inside the auth callback: it may deadlock
+    // while the auth client is processing an auth state change.
+    let active = true;
+    let generation = 0;
+    const refresh = async () => {
+      const current = ++generation;
+      try {
+        const { data, error } = await getSupabase().auth.getUser();
+        if (error && error.name !== "AuthSessionMissingError") throw error;
+        const next = data.user ? await profileFor(data.user) : null;
+        if (active && current === generation) setSession(next);
+      } catch (error) {
+        console.error("Auth refresh error:", error);
+        if (active && current === generation) setSession(null);
+      } finally {
+        if (active && current === generation) setIsLoading(false);
+      }
+    };
+    try {
+      const { data } = getSupabase().auth.onAuthStateChange(() => {
+        void Promise.resolve().then(refresh);
+      });
+      void refresh();
+      return () => {
+        active = false;
+        data.subscription.unsubscribe();
+      };
+    } catch (error) {
+      console.error("Supabase setup error:", error);
+      setIsLoading(false);
+      return () => { active = false; };
+    }
+  }, []);
+
+  const signIn = useCallback(async (email: string, password: string): Promise<Session> => {
+    const { data, error } = await getSupabase().auth.signInWithPassword({ email, password });
+    if (error) throw error;
+    if (!data.user) throw new Error("Sign in did not return a user.");
+    const next = await profileFor(data.user);
+    setSession(next);
+    return next;
+  }, []);
+
+  const signUp = useCallback(async (name: string, email: string, password: string, _role: "user" | "admin" = "user") => {
+    const { data, error } = await getSupabase().auth.signUp({
+      email,
+      password,
+      options: { data: { name } },
+    });
+    if (error) throw error;
+    if (data.session && data.user) setSession(await profileFor(data.user));
+    return { confirmationRequired: !data.session };
+  }, []);
+
+  const signOut = useCallback(async () => {
+    const { error } = await getSupabase().auth.signOut();
+    if (error) throw error;
+    setSession(null);
+  }, []);
+
+  const markVerified = useCallback(async () => {
+    await initializeSession();
+  }, [initializeSession]);
+
+  const updateProfile = useCallback(async (name: string, email: string) => {
+    if (!session?.userId) throw new Error("Sign in to update your profile.");
+    const client = getSupabase();
+    const { error } = await client.from("users").update({ name }).eq("id", session.userId);
+    if (error) throw error;
+    if (email !== session.email) {
+      const { error: emailError } = await client.auth.updateUser({ email });
+      if (emailError) throw emailError;
+    }
+    await initializeSession();
+  }, [session?.userId, session?.email, initializeSession]);
+
+  return { session, isLoading, isSignedIn: Boolean(session?.userId), signIn, signUp, signOut, markVerified, updateProfile, initializeSession };
 }
