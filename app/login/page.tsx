@@ -27,7 +27,7 @@ export default function LoginPage() {
     if (Object.keys(found).length > 0) return;
 
     setLoading(true);
-    signIn(email.trim());
+    signIn(email.trim(), password);
     window.setTimeout(() => router.push("/account"), 350);
   };
 
@@ -115,4 +115,3 @@ export default function LoginPage() {
     </AuthShell>
   );
 }
-

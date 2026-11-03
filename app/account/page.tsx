@@ -23,20 +23,19 @@ export default function AccountPage() {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [toast, setToast] = useState("");
 
-  const profile = session ?? {
-    name: "Alex D.",
-    email: "alex@example.com",
-    verified: false,
-  };
+  // Derive profile from session, with safe defaults
+  const profileName = session?.name || "Alex D.";
+  const profileEmail = session?.email || "alex@example.com";
+  const profileVerified = session?.verified || false;
 
   const startEditing = () => {
-    setName(profile.name);
-    setEmail(profile.email);
+    setName(profileName);
+    setEmail(profileEmail);
     setEditing(true);
   };
 
   const saveProfile = () => {
-    updateProfile(name.trim() || profile.name, email.trim() || profile.email);
+    updateProfile(name.trim() || profileName, email.trim() || profileEmail);
     setEditing(false);
     setToast("Profile updated (demo).");
   };
@@ -62,10 +61,10 @@ export default function AccountPage() {
             </div>
 
             <p className="value" style={{ marginTop: 4 }}>
-              {profile.name}
+              {profileName}
             </p>
             <p className="small muted" style={{ marginTop: 1 }}>
-              {profile.email}
+              {profileEmail}
             </p>
 
             <div className="divider mt-16" />
@@ -73,10 +72,10 @@ export default function AccountPage() {
             <Link href="/verify-email" className="row">
               <span className="row__main">
                 <span className="row__title" style={{ display: "block", fontWeight: 700 }}>
-                  {profile.verified ? "Email verified" : "Email not verified"}
+                  {profileVerified ? "Email verified" : "Email not verified"}
                 </span>
                 <span className="row__sub" style={{ display: "block" }}>
-                  {profile.verified
+                  {profileVerified
                     ? "Your account email is verified."
                     : "Send or manage verification email"}
                 </span>
@@ -139,7 +138,7 @@ export default function AccountPage() {
             <Link href="/legal/terms" className="row">
               <span className="row__main">
                 <span className="row__title" style={{ display: "block" }}>
-                  Terms &amp; Conditions
+                  Terms & Conditions
                 </span>
                 <span className="row__sub" style={{ display: "block" }}>
                   Draft · approval required before launch
@@ -269,4 +268,3 @@ export default function AccountPage() {
     </div>
   );
 }
-

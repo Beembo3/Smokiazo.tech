@@ -39,7 +39,7 @@ export default function SignUpPage() {
     if (Object.keys(found).length > 0) return;
 
     setLoading(true);
-    signUp(form.name.trim(), form.email.trim());
+    signUp(form.name.trim(), form.email.trim(), form.password);
     window.setTimeout(() => router.push("/verify-email"), 350);
   };
 
@@ -106,7 +106,7 @@ export default function SignUpPage() {
             <span>
               I agree to the{" "}
               <Link href="/legal/terms" className="link">
-                Terms &amp; Conditions
+                Terms & Conditions
               </Link>{" "}
               and{" "}
               <Link href="/legal/privacy" className="link">
@@ -133,4 +133,3 @@ export default function SignUpPage() {
     </AuthShell>
   );
 }
-
