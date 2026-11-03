@@ -1,0 +1,1634 @@
+/* ==================================================================
+   2GO Express — Cabanatuan City
+   Tokens taken from the Figma file (Inter, #d60970, #19191f, #f6f5f7)
+   ================================================================== */
+
+:root {
+  --brand: #d60970;
+  --brand-press: #b30860;
+  --brand-tint: #fcecf4;
+  --brand-tint-2: #fbe3ef;
+
+  --ink: #19191f;
+  --ink-2: #3a3a45;
+  --muted: #65656f;
+  --muted-2: #8a8a95;
+  --muted-3: #afaebb;
+
+  --bg: #f6f5f7;
+  --surface: #ffffff;
+  --line: #e9e7ee;
+  --line-2: #dfdee4;
+  --field: #f6f5f7;
+
+  --radius-xl: 24px;
+  --radius-lg: 18px;
+  --radius-md: 14px;
+  --radius-sm: 12px;
+
+  --shadow-card: 0 1px 2px rgba(25, 25, 31, 0.04),
+    0 10px 28px rgba(25, 25, 31, 0.045);
+  --shadow-bar: 0 -1px 0 var(--line), 0 -10px 30px rgba(25, 25, 31, 0.05);
+
+  --app-width: 430px;
+  --gutter: 24px;
+  --tabbar-h: 66px;
+
+  --font: var(--font-inter), "Inter", ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, sans-serif;
+
+  --ion-font-family: var(--font);
+  --ion-color-primary: #d60970;
+  --ion-color-primary-rgb: 214, 9, 112;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #bc0863;
+  --ion-color-primary-tint: #da227e;
+  --ion-background-color: #f6f5f7;
+  --ion-text-color: #19191f;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  background: #e9e7ee;
+}
+
+/* Ionic's global stylesheet locks the document because it expects an
+   IonApp/IonContent scroll container. This app scrolls natively, so undo the
+   fixed, viewport-sized body and let the document scroll instead. */
+html {
+  height: auto;
+  overflow-y: auto;
+}
+
+body {
+  position: static;
+  width: 100%;
+  height: auto;
+  max-height: none;
+  max-width: 100%;
+  overflow: visible;
+  transform: none;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font);
+  color: var(--ink);
+  background: #e9e7ee;
+  font-size: 14px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3,
+h4,
+p {
+  margin: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+ul,
+ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+::selection {
+  background: var(--brand);
+  color: #fff;
+}
+
+/* ------------------------------------------------------------------
+   App shell — 430px column, centered on desktop
+   ------------------------------------------------------------------ */
+.app {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: var(--app-width);
+  min-height: 100dvh;
+  margin: 0 auto;
+  background: var(--bg);
+  overflow-x: clip;
+}
+
+@media (min-width: 640px) {
+  .app {
+    box-shadow: 0 0 0 1px rgba(25, 25, 31, 0.06), 0 30px 80px rgba(25, 25, 31, 0.12);
+  }
+}
+
+.screen {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 28px;
+}
+
+.screen--tabbed {
+  padding-bottom: 12px;
+}
+
+.stack {
+  display: grid;
+  gap: 12px;
+}
+
+.stack--lg {
+  gap: 18px;
+}
+
+.pad {
+  padding-inline: var(--gutter);
+}
+
+.mt-12 {
+  margin-top: 12px;
+}
+
+.mt-16 {
+  margin-top: 16px;
+}
+
+.mt-20 {
+  margin-top: 20px;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.small {
+  font-size: 11.5px;
+  line-height: 1.5;
+}
+
+.tiny {
+  font-size: 10px;
+  line-height: 1.5;
+  color: var(--muted-2);
+}
+
+.strong {
+  font-weight: 700;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ------------------------------------------------------------------
+   Header
+   ------------------------------------------------------------------ */
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px var(--gutter);
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  backdrop-filter: saturate(1.6) blur(12px);
+}
+
+.app-header--solid {
+  background: var(--surface);
+}
+
+.app-header--dark {
+  background: var(--ink);
+  color: #fff;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+}
+
+.brand__mark {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 32px;
+  border-radius: 9px 11px 9px 11px;
+  background: var(--brand);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  font-style: italic;
+  flex: none;
+  box-shadow: inset -3px -3px 0 rgba(0, 0, 0, 0.08);
+}
+
+.brand__mark::after {
+  content: "";
+  position: absolute;
+  right: 4px;
+  bottom: 5px;
+  width: 6px;
+  height: 6px;
+  border-right: 2px solid rgba(255, 255, 255, 0.65);
+  border-bottom: 2px solid rgba(255, 255, 255, 0.65);
+}
+
+.brand__text {
+  display: grid;
+  gap: 1px;
+  line-height: 1.1;
+  min-width: 0;
+}
+
+.brand__name {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.brand__place {
+  font-size: 11px;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.app-header--dark .brand__name {
+  color: #fff;
+}
+
+.app-header--dark .brand__place {
+  color: var(--muted-3);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 11px;
+  border: 1px solid var(--line-2);
+  border-radius: 999px;
+  background: var(--surface);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink);
+  white-space: nowrap;
+  flex: none;
+}
+
+.chip ion-icon {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.app-header--dark .chip {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.24);
+  color: #fff;
+}
+
+/* ------------------------------------------------------------------
+   Back link
+   ------------------------------------------------------------------ */
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  min-height: 44px;
+  padding: 0 var(--gutter);
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--brand);
+}
+
+.back ion-icon {
+  font-size: 14px;
+}
+
+/* ------------------------------------------------------------------
+   Hero cards
+   ------------------------------------------------------------------ */
+.hero {
+  margin: 0 var(--gutter);
+  padding: 20px;
+  border-radius: var(--radius-xl);
+  background: var(--ink);
+  color: #fff;
+  overflow: hidden;
+  position: relative;
+}
+
+.hero:not(.hero--page) {
+  margin-top: 8px;
+}
+
+.hero__eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: #ff4d9d;
+}
+
+.hero__eyebrow::before {
+  content: "";
+  width: 12px;
+  height: 1.5px;
+  background: currentColor;
+  border-radius: 2px;
+  flex: none;
+}
+
+.hero__title {
+  margin-top: 12px;
+  font-size: 34px;
+  font-weight: 800;
+  line-height: 1.04;
+  letter-spacing: -0.035em;
+}
+
+.hero__sub {
+  margin-top: 10px;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: #b9b9c6;
+  max-width: 34ch;
+}
+
+.hero__actions {
+  display: flex;
+  gap: 9px;
+  margin-top: 18px;
+}
+
+.hero__actions .app-button {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+}
+
+.hero__actions .app-button:first-child {
+  flex-grow: 1.5;
+}
+
+.hero--page {
+  padding: 18px 20px 20px;
+}
+
+.hero--page .hero__title {
+  margin-top: 10px;
+  font-size: 27px;
+  letter-spacing: -0.03em;
+}
+
+.hero--page .hero__sub {
+  margin-top: 6px;
+  font-size: 12px;
+}
+
+/* ------------------------------------------------------------------
+   Buttons (Ionic)
+   ------------------------------------------------------------------ */
+ion-button {
+  height: 46px;
+  margin: 0;
+  text-transform: none;
+  font-family: var(--font);
+  font-weight: 600;
+  font-size: 13.5px;
+  letter-spacing: -0.01em;
+  --border-radius: 12px;
+  --box-shadow: none;
+  --padding-start: 14px;
+  --padding-end: 14px;
+  --padding-top: 0;
+  --padding-bottom: 0;
+}
+
+ion-button::part(native) {
+  gap: 6px;
+}
+
+ion-icon {
+  font-size: 16px;
+}
+
+.app-button {
+  display: inline-flex;
+  min-width: 0;
+  vertical-align: middle;
+}
+
+.app-button > ion-button {
+  flex: 1 1 auto;
+  width: 100%;
+}
+
+.btn-content {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.btn-brand ion-button {
+  --background: var(--brand);
+  --background-hover: var(--brand-press);
+  --background-activated: var(--brand-press);
+  --color: #fff;
+}
+
+.btn-ink ion-button {
+  --background: var(--ink);
+  --background-hover: #2b2b34;
+  --color: #fff;
+}
+
+.btn-outline ion-button {
+  --background: transparent;
+  --background-hover: rgba(25, 25, 31, 0.03);
+  --color: var(--ink);
+  --border-width: 1px;
+  --border-style: solid;
+  --border-color: var(--line-2);
+}
+
+.btn-on-dark ion-button {
+  --background: rgba(255, 255, 255, 0.02);
+  --color: #fff;
+  --border-width: 1px;
+  --border-style: solid;
+  --border-color: rgba(255, 255, 255, 0.26);
+}
+
+.btn-quiet ion-button {
+  --background: transparent;
+  --background-hover: rgba(25, 25, 31, 0.04);
+  --color: var(--ink);
+  --padding-start: 8px;
+  --padding-end: 8px;
+}
+
+.btn-link ion-button {
+  --background: transparent;
+  --color: var(--brand);
+  --padding-start: 0;
+  --padding-end: 0;
+  height: auto;
+  font-size: 12px;
+}
+
+ion-button[disabled] {
+  opacity: 0.55;
+}
+
+/* ------------------------------------------------------------------
+   Cards, rows, sections
+   ------------------------------------------------------------------ */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 18px;
+  box-shadow: var(--shadow-card);
+}
+
+.card--flush {
+  padding: 0;
+  overflow: hidden;
+}
+
+.card--tint {
+  background: var(--brand-tint);
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.card__title {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.card__sub {
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.section {
+  padding-inline: var(--gutter);
+}
+
+.section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--brand);
+}
+
+.eyebrow::before {
+  content: "";
+  width: 12px;
+  height: 1.5px;
+  border-radius: 2px;
+  background: currentColor;
+  flex: none;
+}
+
+.eyebrow--plain::before {
+  display: none;
+}
+
+.section-head__aside {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--brand);
+  white-space: nowrap;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  width: 100%;
+  min-height: 56px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+  background: none;
+  border-left: 0;
+  border-right: 0;
+  border-top: 0;
+  text-align: left;
+  cursor: pointer;
+}
+
+.row:last-child {
+  border-bottom: 0;
+}
+
+.row__main {
+  min-width: 0;
+}
+
+.row__title {
+  font-size: 13.5px;
+  font-weight: 600;
+}
+
+.row__sub {
+  margin-top: 1px;
+  font-size: 11.5px;
+  color: var(--muted);
+}
+
+.row__end {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--brand);
+  white-space: nowrap;
+}
+
+.row__chevron {
+  font-size: 15px;
+  color: var(--muted-3);
+}
+
+.divider {
+  height: 1px;
+  background: var(--line);
+}
+
+/* ------------------------------------------------------------------
+   Icon tiles + service cards
+   ------------------------------------------------------------------ */
+.icon-tile {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 13px;
+  background: var(--brand-tint);
+  color: var(--brand);
+  flex: none;
+}
+
+.icon-tile ion-icon {
+  font-size: 21px;
+}
+
+.service {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  transition: border-color 0.18s ease, transform 0.18s ease;
+}
+
+.service:active {
+  transform: scale(0.995);
+}
+
+.service__body {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.service__kicker {
+  display: block;
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--brand);
+}
+
+.service__title {
+  display: block;
+  font-size: 14.5px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.service__text {
+  display: block;
+  margin-top: 3px;
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.service__arrow {
+  font-size: 14px;
+  color: var(--brand);
+  flex: none;
+  margin-top: 3px;
+}
+
+.service__count {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--brand);
+  flex: none;
+}
+
+/* ------------------------------------------------------------------
+   Quick actions (Home)
+   ------------------------------------------------------------------ */
+.quick-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding-inline: var(--gutter);
+}
+
+.quick {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 15px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+}
+
+.quick ion-icon {
+  font-size: 19px;
+  color: var(--ink);
+}
+
+.quick__title {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.quick__text {
+  font-size: 11px;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+/* ------------------------------------------------------------------
+   Tab bar
+   ------------------------------------------------------------------ */
+.tabbar {
+  position: sticky;
+  bottom: 0;
+  z-index: 30;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2px;
+  padding: 6px 8px calc(6px + env(safe-area-inset-bottom));
+  background: var(--surface);
+  border-top: 1px solid var(--line);
+}
+
+.tab {
+  display: grid;
+  justify-items: center;
+  gap: 3px;
+  padding: 5px 2px 4px;
+  border-radius: 12px;
+  font-size: 9.5px;
+  font-weight: 500;
+  color: var(--muted);
+  min-height: 48px;
+}
+
+.tab ion-icon {
+  font-size: 20px;
+}
+
+.tab[aria-current="page"] {
+  color: var(--brand);
+  font-weight: 700;
+}
+
+.tab:active {
+  background: var(--brand-tint);
+}
+
+/* ------------------------------------------------------------------
+   Forms (Ionic input/select themed to the design)
+   ------------------------------------------------------------------ */
+ion-input,
+ion-select,
+ion-textarea {
+  --background: var(--field);
+  --border-radius: 12px;
+  --padding-start: 14px;
+  --padding-end: 14px;
+  --padding-top: 9px;
+  --padding-bottom: 9px;
+  --highlight-color-focused: var(--brand);
+  --highlight-color-valid: var(--brand);
+  --highlight-color-invalid: #c81e3a;
+  --color: var(--ink);
+  --placeholder-color: var(--muted-2);
+  font-family: var(--font);
+  font-size: 14px;
+  font-weight: 600;
+  min-height: 54px;
+  width: 100%;
+}
+
+ion-input::part(label),
+ion-select::part(label),
+ion-textarea::part(label) {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 2px;
+}
+
+ion-input::part(input),
+ion-select::part(text),
+ion-textarea::part(textarea) {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+ion-input::part(helper-text),
+ion-select::part(helper-text),
+ion-textarea::part(helper-text) {
+  font-size: 10.5px;
+  color: #c81e3a;
+  font-weight: 500;
+  padding-top: 4px;
+}
+
+/* Ionic 9 renders ion-input and ion-textarea in the light DOM (scoped),
+   so the shadow ::part rules above don't reach their label/value. */
+ion-input .label-text,
+ion-textarea .label-text {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+ion-input .native-input,
+ion-textarea .native-textarea {
+  font-size: 14px;
+  line-height: 1.35;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+ion-select::part(text) {
+  font-size: 14px;
+}
+
+/* The Figma fields have no focus underline. Ionic's scoped mode rules
+   (.sc-ion-input-md) outrank a plain element selector, so target the mode
+   class and force the highlight height to zero. */
+ion-input.md,
+ion-select.md,
+ion-textarea.md {
+  --highlight-height: 0 !important;
+}
+
+ion-input .input-highlight,
+ion-textarea .textarea-highlight {
+  display: none !important;
+}
+
+ion-select::part(wrapper) {
+  border-bottom: 0;
+}
+
+ion-select::part(icon) {
+  color: var(--brand);
+  opacity: 1;
+  font-size: 13px;
+}
+
+.field {
+  display: block;
+}
+
+.field--unit {
+  position: relative;
+}
+
+.field--unit .field__unit {
+  position: absolute;
+  right: 15px;
+  bottom: 18px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--brand);
+  pointer-events: none;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px;
+}
+
+.grid-2--wide {
+  grid-template-columns: 1.15fr 0.85fr;
+}
+
+.form-block {
+  display: grid;
+  gap: 10px;
+}
+
+.form-title {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.form-note {
+  font-size: 10.5px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.check-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+
+ion-checkbox {
+  --size: 22px;
+  --border-radius: 7px;
+  --border-color: var(--line-2);
+  --border-color-checked: var(--brand);
+  --checkbox-background: var(--field);
+  --checkbox-background-checked: var(--brand);
+  --checkmark-color: #fff;
+  --checkmark-width: 3px;
+  margin: 0;
+  flex: none;
+}
+
+ion-toggle {
+  --track-background: #e4e2e8;
+  --track-background-checked: var(--brand);
+  --handle-background: #fff;
+  --handle-background-checked: #fff;
+  --handle-width: 18px;
+  --handle-height: 18px;
+  padding: 0;
+}
+
+ion-radio {
+  --color-checked: var(--brand);
+}
+
+ion-toast {
+  --background: var(--ink);
+  --color: #fff;
+  --border-radius: 12px;
+}
+
+/* ------------------------------------------------------------------
+   Sticky action bar
+   ------------------------------------------------------------------ */
+.actions {
+  position: sticky;
+  bottom: 0;
+  z-index: 25;
+  display: flex;
+  gap: 10px;
+  margin-top: auto;
+  padding: 12px var(--gutter) calc(12px + env(safe-area-inset-bottom));
+  background: var(--surface);
+  border-top: 1px solid var(--line);
+  box-shadow: 0 -8px 24px rgba(25, 25, 31, 0.04);
+}
+
+.actions .app-button {
+  flex: none;
+}
+
+.actions .app-button:not(.is-primary) {
+  flex: 0 0 108px;
+}
+
+.actions .app-button.is-primary {
+  flex: 1 1 auto;
+}
+
+/* ------------------------------------------------------------------
+   Notices, pills, callouts
+   ------------------------------------------------------------------ */
+.notice {
+  display: flex;
+  gap: 10px;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  background: var(--brand-tint);
+  color: var(--ink-2);
+}
+
+.notice ion-icon {
+  font-size: 17px;
+  color: var(--brand);
+  flex: none;
+  margin-top: 1px;
+}
+
+.notice__title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.notice__text {
+  margin-top: 3px;
+  font-size: 11.5px;
+  line-height: 1.55;
+  color: var(--muted);
+}
+
+.notice__text strong {
+  color: var(--ink-2);
+  font-weight: 600;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: var(--brand-tint);
+  color: var(--brand);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+.pill--dark {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.pill--muted {
+  background: var(--field);
+  color: var(--muted);
+}
+
+.kicker {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.value {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+/* ------------------------------------------------------------------
+   Timeline (tracking)
+   ------------------------------------------------------------------ */
+.timeline {
+  display: grid;
+  gap: 0;
+}
+
+.step {
+  position: relative;
+  display: grid;
+  grid-template-columns: 16px 1fr;
+  gap: 10px;
+  padding-bottom: 18px;
+}
+
+.step:last-child {
+  padding-bottom: 0;
+}
+
+.step::before {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 14px;
+  bottom: 0;
+  width: 1.5px;
+  background: var(--line-2);
+}
+
+.step:last-child::before {
+  display: none;
+}
+
+.step__dot {
+  width: 11px;
+  height: 11px;
+  margin-top: 4px;
+  border-radius: 50%;
+  background: var(--line-2);
+  z-index: 1;
+}
+
+.step--current .step__dot {
+  background: var(--brand);
+  box-shadow: 0 0 0 4px var(--brand-tint);
+}
+
+.step__title {
+  font-size: 12.5px;
+  font-weight: 700;
+}
+
+.step__meta {
+  margin-top: 1px;
+  font-size: 10.5px;
+  color: var(--muted-2);
+}
+
+.step__text {
+  margin-top: 2px;
+  font-size: 11.5px;
+  color: var(--muted);
+}
+
+/* ------------------------------------------------------------------
+   Auth screens
+   ------------------------------------------------------------------ */
+.auth {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  background: var(--ink);
+}
+
+.auth__top {
+  padding-bottom: 30px;
+}
+
+.auth__headline {
+  padding: 8px var(--gutter) 0;
+}
+
+.auth__headline h1 {
+  margin-top: 12px;
+  font-size: 34px;
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+  color: #fff;
+}
+
+.auth__headline p {
+  margin-top: 10px;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: #b9b9c6;
+  max-width: 32ch;
+}
+
+.auth__sheet {
+  flex: 1 1 auto;
+  background: var(--bg);
+  border-radius: 28px 28px 0 0;
+  padding: 10px var(--gutter) 28px;
+  color: var(--ink);
+}
+
+.auth__handle {
+  width: 46px;
+  height: 4px;
+  border-radius: 999px;
+  background: #d9d7de;
+  margin: 4px auto 16px;
+}
+
+.auth__card {
+  background: var(--surface);
+  border-radius: var(--radius-xl);
+  padding: 20px;
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-card);
+}
+
+.auth__title {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.auth__sub {
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.auth__footer {
+  margin-top: 18px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.auth__footer a {
+  font-weight: 700;
+  color: var(--brand);
+}
+
+.auth__legal {
+  margin-top: 14px;
+  text-align: center;
+  font-size: 10.5px;
+  color: var(--muted-2);
+  line-height: 1.5;
+}
+
+/* Inline link */
+.link {
+  color: var(--brand);
+  font-weight: 700;
+}
+
+/* Summary blocks (review screen) */
+.summary {
+  display: grid;
+  gap: 4px;
+}
+
+.summary__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.summary__label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.summary__edit {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--brand);
+}
+
+.summary__text {
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--ink-2);
+}
+
+.summary + .summary {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+
+/* Utility list */
+.bullets {
+  display: grid;
+  gap: 8px;
+}
+
+.bullets li {
+  position: relative;
+  padding-left: 14px;
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--ink-2);
+}
+
+.bullets li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 7px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--brand);
+}
+
+.checklist {
+  display: grid;
+  gap: 10px;
+}
+
+.checklist li {
+  display: flex;
+  gap: 10px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+
+.checklist ion-icon {
+  color: var(--brand);
+  font-size: 15px;
+  flex: none;
+  margin-top: 1px;
+}
+
+/* Requests */
+.request {
+  display: block;
+  padding: 16px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
+
+.request__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.request__ref {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--brand);
+}
+
+.request__title {
+  margin-top: 4px;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.request__meta {
+  margin-top: 4px;
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.request__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+/* Screen index (demo helper) */
+.screen-list {
+  display: grid;
+  gap: 6px;
+}
+
+.screen-list a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 14px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+.screen-list span {
+  font-size: 10.5px;
+  color: var(--muted-2);
+  font-weight: 500;
+}
+
+/* ------------------------------------------------------------------
+   Reduced motion
+   ------------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* Read-only summary fields (Rates screen) */
+.ro-field {
+  display: grid;
+  gap: 2px;
+  padding: 10px 14px 11px;
+  border-radius: 12px;
+  background: var(--field);
+  min-height: 58px;
+  align-content: center;
+}
+
+.ro-field__label {
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.ro-field__value {
+  font-size: 13.5px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+.ro-field__value--empty {
+  color: var(--muted-2);
+  font-weight: 500;
+}
+
+.field__error {
+  display: block;
+  margin: 4px 2px 0;
+  font-size: 10.5px;
+  font-weight: 500;
+  color: #c81e3a;
+}
+
+.field--unit ion-input {
+  --padding-end: 44px;
+}
+
+/* Full-width list actions */
+.full-button {
+  display: block;
+  width: 100%;
+}
+
+.full-button .app-button {
+  display: flex;
+  width: 100%;
+}
+
+/* Key/value list inside a card */
+.kv {
+  display: grid;
+  gap: 14px;
+}
+
+.kv__row {
+  display: grid;
+  gap: 2px;
+}
+
+.kv__label {
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.kv__value {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--ink-2);
+  font-weight: 500;
+}
+
+/* Compact quote steps */
+.steps {
+  display: flex;
+  gap: 4px;
+  padding: 0 var(--gutter) 12px;
+}
+
+.steps__seg {
+  flex: 1;
+  height: 3px;
+  border-radius: 999px;
+  background: var(--line-2);
+}
+
+.steps__seg--done {
+  background: var(--brand);
+}
+
+/* Demo barcode */
+.barcode {
+  height: 46px;
+  width: 156px;
+  margin-top: 12px;
+  border-radius: 8px;
+  background-color: #f1f0f4;
+  background-image: repeating-linear-gradient(
+    90deg,
+    var(--ink) 0 2px,
+    transparent 2px 4px,
+    var(--ink) 4px 5px,
+    transparent 5px 9px,
+    var(--ink) 9px 12px,
+    transparent 12px 14px
+  );
+  opacity: 0.85;
+}
+
+/* Bottom sheet / dialog */
+.sheet-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: rgba(25, 25, 31, 0.42);
+  backdrop-filter: blur(2px);
+}
+
+.sheet {
+  width: 100%;
+  max-width: var(--app-width);
+  max-height: 90dvh;
+  overflow-y: auto;
+  padding: 20px var(--gutter) calc(20px + env(safe-area-inset-bottom));
+  background: var(--surface);
+  border-radius: 24px 24px 0 0;
+  display: grid;
+  gap: 10px;
+  box-shadow: 0 -20px 60px rgba(25, 25, 31, 0.25);
+}
+
+.sheet__title {
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.sheet__text {
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--muted);
+}
+
+.sheet__actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.sheet__actions ion-button {
+  flex: 1;
+}
+
+/* Branded boot screen (client-only Ionic mount) */
+.boot {
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 14px;
+  min-height: 100dvh;
+  background: var(--ink);
+  color: #fff;
+}
+
+.boot__mark {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 56px;
+  border-radius: 16px 20px 16px 20px;
+  background: var(--brand);
+  font-size: 24px;
+  font-weight: 800;
+  font-style: italic;
+  letter-spacing: -0.04em;
+}
+
+.boot__label {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #9d9daa;
+}
