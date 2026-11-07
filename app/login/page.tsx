@@ -25,7 +25,6 @@ export default function LoginPage() {
     setError("");
     if (Object.keys(found).length) return;
 
-    setLoading(true);
     try {
       const next = await signIn(email.trim(), password);
       // Supabase signIn may redirect the browser to site_url; if it doesn't (or
@@ -37,8 +36,6 @@ export default function LoginPage() {
       }
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Unable to sign in. Please try again.");
-    } finally {
-      setLoading(false);
     }
   };
 
