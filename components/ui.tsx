@@ -64,9 +64,11 @@ export function Logo() {
 export function AppHeader({
   variant = "light",
   solid = false,
+  badge,
 }: {
   variant?: "light" | "dark";
   solid?: boolean;
+  badge?: React.ReactNode;
 }) {
   return (
     <header
@@ -81,10 +83,14 @@ export function AppHeader({
       <Link href="/" aria-label="2GO Express Cabanatuan City — home">
         <Logo />
       </Link>
-      <Link href="/branch" className="chip" aria-label="Cabanatuan branch details">
-        <IonIcon icon={locationOutline} aria-hidden="true" />
-        Cabanatuan
-      </Link>
+      {badge ? (
+        <span className="pill">{badge}</span>
+      ) : (
+        <Link href="/branch" className="chip" aria-label="Cabanatuan branch details">
+          <IonIcon icon={locationOutline} aria-hidden="true" />
+          Cabanatuan
+        </Link>
+      )}
     </header>
   );
 }
