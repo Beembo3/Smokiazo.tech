@@ -11,7 +11,7 @@ import { useSession } from "@/lib/use-session";
 
 export default function LoginPage() {
   const router = useRouter();
-  const { signIn, session, isLoading } = useSession();
+  const { signIn, session } = useSession();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
