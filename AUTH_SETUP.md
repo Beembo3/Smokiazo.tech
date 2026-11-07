@@ -17,6 +17,21 @@ The `/manage` page lists records visible under the active account's RLS policies
 
 **Important:** Protect the `users` table's `role` column against updates by ordinary authenticated users. Database-side authorization is essential even though `/manage` also checks the role in Next.js proxy.
 
+## Database migrations
+
+The schema, RLS policies and triggers live in `supabase/migrations/`:
+
+- `20261107000000_create_users.sql` — `public.users`, RLS (own-profile read/update, admin read-all via `is_admin()`), `users_protect_role` and `on_auth_user_created` triggers
+- `20261107000001_sync_and_harden_users.sql` — mirrors `auth.users.email`/`email_confirmed_at` onto the profile (`on_auth_user_updated`) and limits the `authenticated` role to `UPDATE (name)` only
+
+Apply with the Supabase CLI (`supabase db push`) or by pasting each file into the SQL Editor. All statements are idempotent.
+
+## Auth redirect URLs
+
+`Site URL` must be the production origin (`https://smokiazo-tech.vercel.app/`). Add these to **Redirect URLs**: the production origin, the custom domain if used, and `http://localhost:3000/**` for local development.
+
+Email links land on the Site URL with `?code=` / `?token_hash=`, which `proxy.ts` exchanges for a session before the auth gate runs.
+
 ## Routes
 
 - `/`: home for authenticated visitors; unauthenticated visitors are redirected to `/login`

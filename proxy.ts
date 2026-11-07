@@ -1,4 +1,5 @@
 import { createServerClient } from "@supabase/ssr";
+import type { EmailOtpType } from "@supabase/supabase-js";
 import { NextResponse, type NextRequest } from "next/server";
 
 export async function proxy(request: NextRequest) {
@@ -36,6 +37,26 @@ export async function proxy(request: NextRequest) {
 
   const { data: { user }, error } = await supabase.auth.getUser();
   if (error || !user) {
+    // Supabase redirects email-confirmation and recovery links to the Site URL
+    // with a ?code= (PKCE) or ?token_hash=&type= parameter. Exchange it before
+    // the auth gate runs, otherwise the parameter is dropped and the user is
+    // sent back to /login without ever getting a session.
+    const code = request.nextUrl.searchParams.get("code");
+    const tokenHash = request.nextUrl.searchParams.get("token_hash");
+    const otpType = request.nextUrl.searchParams.get("type") as EmailOtpType | null;
+
+    if (code || (tokenHash && otpType)) {
+      const { error: exchangeError } = code
+        ? await supabase.auth.exchangeCodeForSession(code)
+        : await supabase.auth.verifyOtp({ type: otpType!, token_hash: tokenHash! });
+
+      if (exchangeError) return redirect("/login?error=auth", response);
+
+      const success = NextResponse.redirect(new URL(pathname, request.url));
+      response.cookies.getAll().forEach((cookie) => success.cookies.set(cookie));
+      return success;
+    }
+
     return redirect(pathname === "/manage" ? "/admin" : "/login", response);
   }
 
