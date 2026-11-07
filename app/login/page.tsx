@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowUpRight, Button } from "@/components/ui";
@@ -11,15 +11,26 @@ import { useSession } from "@/lib/use-session";
 
 export default function LoginPage() {
   const router = useRouter();
-  const { signIn } = useSession();
+  const { signIn, session, isLoading } = useSession();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+
+  // Redirect based on role after the session is established.
+  // Supabase's signIn triggers a browser redirect to site_url; this effect
+  // fires once the session cookie is set and the user is officially signed in.
+  useEffect(() => {
+    if (session?.userId && router.pathname === "/login") {
+      if (session.role === "admin") {
+        router.push("/manage");
+      } else {
+        router.push("/");
+      }
+    }
+  }, [session?.userId, router.pathname, router]);
 
   const submit = async () => {
-    if (loading) return;
     const found: { email?: string; password?: string } = {};
     if (!emailPattern.test(email.trim())) found.email = "Enter a valid email address.";
     if (!password) found.password = "Enter your password.";
@@ -27,15 +38,12 @@ export default function LoginPage() {
     setError("");
     if (Object.keys(found).length) return;
 
-    setLoading(true);
     try {
       await signIn(email.trim(), password);
       // Supabase handles the redirect to site_url (/) after sign in.
-      // Removing manual router.replace to avoid conflict with Supabase's auth flow.
+      // The useEffect above will redirect based on role once the session is ready.
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Unable to sign in. Please try again.");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -49,18 +57,14 @@ export default function LoginPage() {
         <h2 className="auth__title">Sign in</h2>
         <p className="auth__sub">Use your email and password to continue.</p>
         <form onSubmit={(event) => { event.preventDefault(); void submit(); }} className="stack mt-16" style={{ gap: 9 }}>
-          <TextField label="Email address" value={email} onChange={(value) => {
-            setEmail(value); setErrors((previous) => ({ ...previous, email: undefined }));
-          }} type="email" inputMode="email" error={errors.email} autoComplete="email" />
-          <TextField label="Password" value={password} onChange={(value) => {
-            setPassword(value); setErrors((previous) => ({ ...previous, password: undefined }));
-          }} type="password" error={errors.password} autoComplete="current-password" />
+          <TextField label="Email address" value={email} onChange={(value) => { setEmail(value); setErrors((previous) => ({ ...previous, email: undefined })); }} type="email" inputMode="email" error={errors.email} autoComplete="email" />
+          <TextField label="Password" value={password} onChange={(value) => { setPassword(value); setErrors((previous) => ({ ...previous, password: undefined })); }} type="password" error={errors.password} autoComplete="current-password" />
           <div style={{ display: "flex", justifyContent: "flex-end" }}>
             <Link href="/forgot-password" className="link" style={{ fontSize: 11.5 }}>Forgot password?</Link>
           </div>
           {error && <p role="alert" className="field__error">{error}</p>}
           <div className="full-button mt-12">
-            <Button variant="brand" onClick={() => { void submit(); }} loading={loading}>
+            <Button variant="brand" onClick={() => { void submit(); }} loading={!!error || !!Object.keys(errors).length}>
               Sign In <ArrowUpRight size={13} />
             </Button>
           </div>
