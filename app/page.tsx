@@ -13,6 +13,7 @@ import {
   SectionHead,
 } from "@/components/ui";
 import { HOME_SERVICES } from "@/lib/demo";
+import { useSession } from "@/lib/use-session";
 
 export default function HomePage() {
   return (
@@ -80,6 +81,11 @@ export default function HomePage() {
             Confirm final rates and availability with the branch.
           </p>
         </section>
+        <div className="full-button mt-12" style={{ textAlign: "center" }}>
+          <Button variant="outline" onClick={() => router.push("/login")}>
+            Sign out
+          </Button>
+        </div>
       </main>
     </PageShell>
   );
