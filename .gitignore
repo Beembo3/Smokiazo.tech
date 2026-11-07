@@ -4,3 +4,4 @@
 !.env
 .figma/
 *.local
+*.tsbuildinfo
