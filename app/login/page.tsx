@@ -30,8 +30,8 @@ export default function LoginPage() {
     setLoading(true);
     try {
       await signIn(email.trim(), password);
-      router.replace("/");
-      router.refresh();
+      // Supabase handles the redirect to site_url (/) after sign in.
+      // Removing manual router.replace to avoid conflict with Supabase's auth flow.
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Unable to sign in. Please try again.");
     } finally {
