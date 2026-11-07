@@ -62,7 +62,6 @@ export default function LoginPage() {
           </div>
         </form>
       </div>
-      <p className="auth__legal">Sign in with your registered account. Admins can use the <Link href="/admin" className="link">admin login</Link>.</p>
     </AuthShell>
   );
 }
