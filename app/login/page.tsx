@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowUpRight, Button } from "@/components/ui";
@@ -17,19 +17,6 @@ export default function LoginPage() {
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
   const [error, setError] = useState("");
 
-  // Redirect based on role after the session is established.
-  // Supabase's signIn triggers a browser redirect to site_url; this effect
-  // fires once the session cookie is set and the user is officially signed in.
-  useEffect(() => {
-    if (session?.userId && router.pathname === "/login") {
-      if (session.role === "admin") {
-        router.push("/manage");
-      } else {
-        router.push("/");
-      }
-    }
-  }, [session?.userId, router.pathname, router]);
-
   const submit = async () => {
     const found: { email?: string; password?: string } = {};
     if (!emailPattern.test(email.trim())) found.email = "Enter a valid email address.";
@@ -38,12 +25,20 @@ export default function LoginPage() {
     setError("");
     if (Object.keys(found).length) return;
 
+    setLoading(true);
     try {
-      await signIn(email.trim(), password);
-      // Supabase handles the redirect to site_url (/) after sign in.
-      // The useEffect above will redirect based on role once the session is ready.
+      const next = await signIn(email.trim(), password);
+      // Supabase signIn may redirect the browser to site_url; if it doesn't (or
+      // the redirect is blocked), we manually steer the user based on role.
+      if (next?.role === "admin") {
+        router.push("/manage");
+      } else {
+        router.push("/");
+      }
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Unable to sign in. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
