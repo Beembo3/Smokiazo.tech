@@ -13,7 +13,7 @@ import { useSession } from "@/lib/use-session";
 
 export default function AdminLoginPage() {
   const router = useRouter();
-  const { signIn, signOut, session, isLoading } = useSession();
+  const { signIn, signOut } = useSession();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
@@ -43,20 +43,6 @@ export default function AdminLoginPage() {
       setError(cause instanceof Error ? cause.message : "Unable to sign in.");
     } finally {
       setLoading(false);
-    }
-  };
-
-  /** Demo login – simulates an admin session for prototype purposes.
-   *  Stores a demo marker in localStorage and redirects to /manage.
-   *  The /manage page will show the staff workspace with demo data.
-   */
-  const demoLogin = () => {
-    try {
-      localStorage.setItem("demo_admin_session", "1");
-      router.replace("/manage");
-      router.refresh();
-    } catch {
-      alert("Unable to save demo session. Please try again.");
     }
   };
 
@@ -130,14 +116,6 @@ export default function AdminLoginPage() {
             <Button variant="brand" onClick={() => { void submit(); }} loading={loading}>
               Sign in to staff access <ArrowUpRight size={13} />
             </Button>
-            <Button
-              variant="outline"
-              onClick={() => {
-                demoLogin();
-              }}
-            >
-              Continue as demo admin
-            </Button>
           </div>
         </form>
 
@@ -153,8 +131,7 @@ export default function AdminLoginPage() {
           <p className="notice__title">Restricted access</p>
           <p className="notice__text">
             Design demo only. No staff accounts are provisioned and no requests
-            are sent. Credentials: <strong>admin@2go.com / admin123</strong>
-            · Click "Continue as demo admin" to explore the staff workspace.
+            are sent.
           </p>
         </div>
       </div>

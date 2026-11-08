@@ -13,7 +13,7 @@ export default function ManageLayout({
   const router = useRouter();
   const pathname = usePathname();
   const { session, isLoading } = useSession();
-  const allowed = Boolean(session && session.role === "admin") || typeof window !== "undefined" && localStorage.getItem("demo_admin_session") === "1";
+  const allowed = Boolean(session && session.role === "admin");
 
   useEffect(() => {
     if (!isLoading && !allowed) router.replace("/admin");
