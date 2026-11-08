@@ -11,11 +11,12 @@ import { useSession } from "@/lib/use-session";
 
 export default function LoginPage() {
   const router = useRouter();
-  const { signIn, session } = useSession();
+  const { signIn } = useSession();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
   const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   const submit = async () => {
     const found: { email?: string; password?: string } = {};
@@ -25,6 +26,7 @@ export default function LoginPage() {
     setError("");
     if (Object.keys(found).length) return;
 
+    setSubmitting(true);
     try {
       const next = await signIn(email.trim(), password);
       // Supabase signIn may redirect the browser to site_url; if it doesn't (or
@@ -36,7 +38,17 @@ export default function LoginPage() {
       }
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Unable to sign in. Please try again.");
+    } finally {
+      setSubmitting(false);
     }
+  };
+
+  const clearError = (field: "email" | "password") => {
+    setErrors((previous) => {
+      const next = { ...previous };
+      delete next[field];
+      return next;
+    });
   };
 
   return (
@@ -49,14 +61,14 @@ export default function LoginPage() {
         <h2 className="auth__title">Sign in</h2>
         <p className="auth__sub">Use your email and password to continue.</p>
         <form onSubmit={(event) => { event.preventDefault(); void submit(); }} className="stack mt-16" style={{ gap: 9 }}>
-          <TextField label="Email address" value={email} onChange={(value) => { setEmail(value); setErrors((previous) => ({ ...previous, email: undefined })); }} type="email" inputMode="email" error={errors.email} autoComplete="email" />
-          <TextField label="Password" value={password} onChange={(value) => { setPassword(value); setErrors((previous) => ({ ...previous, password: undefined })); }} type="password" error={errors.password} autoComplete="current-password" />
+          <TextField label="Email address" value={email} onChange={(value) => { setEmail(value); clearError("email"); }} type="email" inputMode="email" error={errors.email} autoComplete="email" />
+          <TextField label="Password" value={password} onChange={(value) => { setPassword(value); clearError("password"); }} type="password" error={errors.password} autoComplete="current-password" />
           <div style={{ display: "flex", justifyContent: "flex-end" }}>
             <Link href="/forgot-password" className="link" style={{ fontSize: 11.5 }}>Forgot password?</Link>
           </div>
           {error && <p role="alert" className="field__error">{error}</p>}
           <div className="full-button mt-12">
-            <Button variant="brand" onClick={() => { void submit(); }} loading={!!error || !!Object.keys(errors).length}>
+            <Button variant="brand" onClick={() => { void submit(); }} loading={submitting}>
               Sign In <ArrowUpRight size={13} />
             </Button>
           </div>
