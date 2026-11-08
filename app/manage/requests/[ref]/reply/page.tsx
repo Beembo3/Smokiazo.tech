@@ -300,7 +300,11 @@ export default function StaffReplyPage() {
             Preview reply
           </Button>
         </div>
-        <Button variant="brand" disabled={!canSend} onClick={send}>
+        <Button
+          variant="brand"
+          disabled={!canSend}
+          onClick={send}
+        >
           {sent
             ? "Sent — duplicate send blocked"
             : canSend
