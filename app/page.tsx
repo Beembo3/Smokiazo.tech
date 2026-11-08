@@ -1,9 +1,10 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { IonIcon } from "@ionic/react";
-import { locationOutline, scanOutline } from "ionicons/icons";
+import { locationOutline, logOutOutline, scanOutline } from "ionicons/icons";
 import {
   AppHeader,
   ArrowUpRight,
@@ -19,11 +20,32 @@ import { useSession } from "@/lib/use-session";
 export default function HomePage() {
   const router = useRouter();
   const { signOut } = useSession();
+  const [confirming, setConfirming] = useState(false);
+  const [signingOut, setSigningOut] = useState(false);
+  const dialogRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!confirming) return;
+    dialogRef.current?.focus();
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && !signingOut) setConfirming(false);
+    };
+    document.addEventListener("keydown", onKey);
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [confirming, signingOut]);
 
   const handleSignOut = async () => {
+    setSigningOut(true);
     try {
       await signOut();
     } finally {
+      setSigningOut(false);
+      setConfirming(false);
       router.push("/login");
       router.refresh();
     }
@@ -95,11 +117,60 @@ export default function HomePage() {
           </p>
         </section>
         <div className="full-button mt-12" style={{ textAlign: "center" }}>
-          <Button variant="outline" onClick={() => { void handleSignOut(); }}>
+          <Button variant="outline" onClick={() => setConfirming(true)}>
             Sign out
           </Button>
         </div>
       </main>
+
+      {confirming && (
+        <div
+          className="confirm"
+          role="presentation"
+          onClick={(event) => {
+            if (event.target === event.currentTarget && !signingOut) setConfirming(false);
+          }}
+        >
+          <div
+            className="confirm__card"
+            ref={dialogRef}
+            role="alertdialog"
+            aria-modal="true"
+            aria-labelledby="signout-title"
+            aria-describedby="signout-text"
+            tabIndex={-1}
+          >
+            <span className="confirm__icon" aria-hidden="true">
+              <IonIcon icon={logOutOutline} />
+            </span>
+            <h2 className="confirm__title" id="signout-title">
+              Sign out?
+            </h2>
+            <p className="confirm__text" id="signout-text">
+              You will need to sign in again to access your 2GO Express
+              account. Are you sure you want to sign out?
+            </p>
+            <div className="confirm__actions">
+              <Button
+                variant="outline"
+                disabled={signingOut}
+                onClick={() => setConfirming(false)}
+              >
+                No, stay
+              </Button>
+              <Button
+                variant="brand"
+                loading={signingOut}
+                onClick={() => {
+                  void handleSignOut();
+                }}
+              >
+                Yes, sign out
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </PageShell>
   );
 }
