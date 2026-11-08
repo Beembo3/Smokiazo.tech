@@ -56,4 +56,7 @@ export const STORAGE_KEYS = {
   session: "2go.session",
   notifications: "2go.notification-pref",
   help: "2go.help-requests",
+  staff: "2go.staff-state",
+  staffSupport: "2go.staff-support",
+  branchProfile: "2go.branch-profile",
 } as const;

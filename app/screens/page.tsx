@@ -60,6 +60,23 @@ const GROUPS: { title: string; items: { label: string; href: string; note?: stri
     ],
   },
   {
+    title: "Staff workspace",
+    items: [
+      { label: "Staff sign in", href: "/admin" },
+      { label: "Branch overview", href: "/manage" },
+      { label: "Request inbox", href: "/manage/requests" },
+      { label: "Quote request detail", href: "/manage/requests/DEMO-Q-0018" },
+      { label: "Prepare quote response", href: "/manage/requests/DEMO-Q-0018/reply" },
+      { label: "Inquiry detail", href: "/manage/requests/DEMO-I-0007" },
+      { label: "Shipment lookup", href: "/manage/lookup" },
+      { label: "Support case", href: "/manage/support" },
+      { label: "Branch profile", href: "/manage/branch" },
+      { label: "Account & access", href: "/manage/account" },
+      { label: "More", href: "/manage/more" },
+      { label: "User directory", href: "/manage/directory" },
+    ],
+  },
+  {
     title: "Policies",
     items: [
       { label: "Privacy Policy (draft)", href: "/legal/privacy" },

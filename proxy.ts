@@ -16,7 +16,9 @@ export async function proxy(request: NextRequest) {
   };
 
   if (!url || !key) {
-    return pathname === "/manage" ? redirect("/admin") : redirect("/login");
+    return pathname.startsWith("/manage")
+      ? redirect("/admin")
+      : redirect("/login");
   }
 
   let response = NextResponse.next({ request });
@@ -57,10 +59,13 @@ export async function proxy(request: NextRequest) {
       return success;
     }
 
-    return redirect(pathname === "/manage" ? "/admin" : "/login", response);
+    return redirect(
+      pathname.startsWith("/manage") ? "/admin" : "/login",
+      response,
+    );
   }
 
-  if (pathname === "/manage") {
+  if (pathname.startsWith("/manage")) {
     // A normal user cannot make themselves admin by editing localStorage or
     // passing an "admin" string to signIn.
     const { data: profile, error: profileError } = await supabase

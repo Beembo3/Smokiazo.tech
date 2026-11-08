@@ -1814,6 +1814,331 @@ button.tab {
   to { opacity: 1; transform: none; }
 }
 
+/* ------------------------------------------------------------------
+   Staff workspace (mirrors the Figma "Staff" screens)
+   ------------------------------------------------------------------ */
+.segmented {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 3px;
+  padding: 4px;
+  border-radius: 13px;
+  background: var(--field);
+}
+
+.segmented--2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.segmented__item {
+  min-height: 34px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--muted);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.segmented__item.is-active {
+  background: var(--surface);
+  color: var(--brand);
+  font-weight: 700;
+  box-shadow: 0 1px 2px rgba(25, 25, 31, 0.05);
+}
+
+.staff-status-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.staff-status-line__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ink-2);
+}
+
+.staff-status-line__label ion-icon {
+  font-size: 13px;
+  color: var(--brand);
+}
+
+.staff-select-inline {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 2px;
+  cursor: pointer;
+}
+
+.staff-select-inline:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 1px;
+  border-radius: 4px;
+}
+
+.staff-assign {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 10px;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.staff-assign ion-icon {
+  font-size: 13px;
+  color: var(--muted-2);
+}
+
+.staff-status-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 24px;
+}
+
+.staff-status-row .tiny {
+  margin: 0;
+}
+
+.staff-assigned {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 10px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.staff-assigned ion-icon {
+  font-size: 13px;
+  color: var(--brand);
+}
+
+.meta-block {
+  margin-top: 14px;
+}
+
+.meta-block:first-child {
+  margin-top: 0;
+}
+
+.meta-block + .meta-block {
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+
+.meta-block__label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.meta-block__title {
+  font-size: 13.5px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+.meta-block__text {
+  margin-top: 4px;
+  font-size: 13px;
+  line-height: 1.5;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  white-space: pre-line;
+}
+
+.review-list {
+  display: grid;
+  gap: 12px;
+}
+
+.charge-line {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  gap: 9px;
+  align-items: start;
+}
+
+.charge-line__remove {
+  grid-column: 1 / -1;
+  justify-self: start;
+  border: 0;
+  background: none;
+  padding: 0;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--brand);
+  cursor: pointer;
+}
+
+.actions--staff {
+  gap: 9px;
+}
+
+.actions--inline {
+  position: static;
+  z-index: auto;
+  margin-top: 14px;
+  padding: 0;
+  background: none;
+  border-top: 0;
+  box-shadow: none;
+}
+
+.actions--staff .app-button,
+.actions--staff .app-button:not(.is-primary),
+.actions--staff .app-button.is-primary {
+  flex: 1 1 0;
+  display: flex;
+  min-width: 0;
+}
+
+.actions--staff .app-button > ion-button {
+  width: 100%;
+}
+
+.actions--stack {
+  flex-direction: column;
+}
+
+.actions__row {
+  display: flex;
+  gap: 9px;
+}
+
+.actions__row .app-button {
+  flex: 1 1 0;
+  display: flex;
+}
+
+.actions__row .app-button > ion-button {
+  width: 100%;
+}
+
+.lookup-symbol {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  margin: 14px auto 12px;
+  border-radius: 15px;
+  background: var(--brand-tint);
+  color: var(--brand);
+  font-size: 24px;
+}
+
+.lookup-timeline {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--field);
+  text-align: left;
+  font-size: 11px;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+.lookup-timeline ion-icon {
+  font-size: 15px;
+  color: var(--muted-2);
+  flex: none;
+  margin-top: 1px;
+}
+
+.notice--plain {
+  display: block;
+  font-size: 11.5px;
+  line-height: 1.55;
+  color: var(--muted);
+}
+
+.thread {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--brand-tint);
+  color: var(--ink-2);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.thread--staff {
+  background: var(--field);
+}
+
+.thread__meta {
+  display: block;
+  margin-top: 4px;
+  font-size: 9.5px;
+  color: var(--muted-2);
+}
+
+.account-profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.account-profile .avatar {
+  width: 44px;
+  height: 44px;
+  font-size: 13px;
+}
+
+.account-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  margin-top: 12px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--brand);
+}
+
+.account-link ion-icon:first-child {
+  font-size: 16px;
+}
+
+.account-link .row__chevron {
+  margin-left: auto;
+}
+
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.staff-empty {
+  text-align: center;
+  padding: 8px 0;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .confirm,
   .confirm__card {

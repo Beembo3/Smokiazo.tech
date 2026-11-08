@@ -8,16 +8,18 @@ export function AuthShell({
   sub,
   children,
   footer,
+  badge,
 }: {
   headline: React.ReactNode;
   sub?: React.ReactNode;
   children: React.ReactNode;
   footer?: React.ReactNode;
+  badge?: React.ReactNode;
 }) {
   return (
     <div className="app">
       <div className="auth">
-        <AppHeader variant="dark" />
+        <AppHeader variant="dark" badge={badge} />
 
         <div className="auth__top">
           <div className="auth__headline">

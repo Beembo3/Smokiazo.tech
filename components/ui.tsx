@@ -154,7 +154,7 @@ const ICONS: Record<string, string> = {
 export function IconTile({ icon }: { icon: keyof typeof ICONS | string }) {
   return (
     <span className="icon-tile" aria-hidden="true">
-      <IonIcon icon={ICONS[icon] ?? cubeOutline} />
+      <IonIcon icon={ICONS[icon] ?? icon} />
     </span>
   );
 }
