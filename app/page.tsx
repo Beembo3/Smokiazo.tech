@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { IonIcon } from "@ionic/react";
 import { locationOutline, scanOutline } from "ionicons/icons";
 import {
@@ -16,6 +17,18 @@ import { HOME_SERVICES } from "@/lib/demo";
 import { useSession } from "@/lib/use-session";
 
 export default function HomePage() {
+  const router = useRouter();
+  const { signOut } = useSession();
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+    } finally {
+      router.push("/login");
+      router.refresh();
+    }
+  };
+
   return (
     <PageShell tab="home">
       <AppHeader />
@@ -82,7 +95,7 @@ export default function HomePage() {
           </p>
         </section>
         <div className="full-button mt-12" style={{ textAlign: "center" }}>
-          <Button variant="outline" onClick={() => router.push("/login")}>
+          <Button variant="outline" onClick={() => { void handleSignOut(); }}>
             Sign out
           </Button>
         </div>
